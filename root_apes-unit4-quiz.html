@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APES Unit 4 Quiz – Earth Systems & Resources</title>
+<style>
+  :root {
+    --bg: #0f1e17; --card: #ffffff; --accent: #2e8b57; --accent-dark: #1f6b41;
+    --text: #1d2a22; --muted: #5d6b63; --correct: #2e9e5b; --wrong: #d64545;
+    --correct-bg: #e5f6ec; --wrong-bg: #fbe9e9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(160deg, #0f1e17 0%, #1d3b2c 50%, #234a5e 100%);
+    color: var(--text); display: flex; justify-content: center; align-items: flex-start; padding: 32px 16px;
+  }
+  .card {
+    background: var(--card); width: 100%; max-width: 760px; border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.35); padding: 32px; animation: fade .3s ease;
+  }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  h1 { margin: 0 0 6px; font-size: 1.9rem; color: var(--accent-dark); }
+  h2 { margin: 0 0 16px; font-size: 1.25rem; line-height: 1.45; }
+  .subtitle { color: var(--muted); margin: 0 0 22px; }
+  .topics { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .chip { background: #eaf4ee; color: var(--accent-dark); padding: 5px 11px; border-radius: 999px; font-size: .85rem; }
+  label.opt-row { display: flex; align-items: center; gap: 10px; margin: 10px 0; color: var(--muted); cursor: pointer; }
+  select { padding: 6px 10px; border-radius: 8px; border: 1px solid #ccd; font-size: 1rem; }
+  button {
+    font: inherit; cursor: pointer; border: none; border-radius: 10px; padding: 12px 22px;
+    background: var(--accent); color: #fff; font-weight: 600; transition: background .15s, transform .1s;
+  }
+  button:hover:not(:disabled) { background: var(--accent-dark); }
+  button:active:not(:disabled) { transform: scale(.98); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.secondary { background: #e8ecea; color: var(--text); }
+  button.secondary:hover { background: #d6ddd9; }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; font-size: .9rem; color: var(--muted); margin-bottom: 8px; }
+  .progress { height: 8px; background: #e6ece8; border-radius: 99px; overflow: hidden; margin-bottom: 22px; }
+  .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+  .topic-tag { display: inline-block; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  .choices { display: grid; gap: 10px; }
+  .choice {
+    text-align: left; background: #f5f8f6; color: var(--text); border: 2px solid #e1e8e4;
+    font-weight: 500; display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px;
+  }
+  .choice:hover:not(:disabled) { background: #eaf4ee; border-color: var(--accent); }
+  .choice .letter {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: #dfe8e3;
+    display: grid; place-items: center; font-weight: 700; font-size: .85rem;
+  }
+  .choice.correct { background: var(--correct-bg); border-color: var(--correct); }
+  .choice.correct .letter { background: var(--correct); color: #fff; }
+  .choice.wrong { background: var(--wrong-bg); border-color: var(--wrong); }
+  .choice.wrong .letter { background: var(--wrong); color: #fff; }
+  .choice:disabled { cursor: default; opacity: 1; }
+  .feedback { margin-top: 18px; padding: 14px 16px; border-radius: 10px; line-height: 1.5; display: none; }
+  .feedback.show { display: block; animation: fade .25s; }
+  .feedback.good { background: var(--correct-bg); border-left: 5px solid var(--correct); }
+  .feedback.bad { background: var(--wrong-bg); border-left: 5px solid var(--wrong); }
+  .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+  .score-big { font-size: 3.2rem; font-weight: 800; color: var(--accent-dark); margin: 6px 0; }
+  .grade { font-size: 1.1rem; margin-bottom: 20px; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 22px; font-size: .95rem; }
+  th, td { padding: 8px 6px; border-bottom: 1px solid #e6ece8; text-align: left; }
+  td.num { text-align: right; white-space: nowrap; }
+  .bar { height: 6px; background: #e6ece8; border-radius: 99px; overflow: hidden; margin-top: 4px; }
+  .bar > div { height: 100%; }
+  .review-item { border: 1px solid #e6ece8; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+  .review-item p { margin: 6px 0; }
+  .review-item .yours { color: var(--wrong); }
+  .review-item .right { color: var(--correct); font-weight: 600; }
+  .review-item .exp { color: var(--muted); font-size: .93rem; }
+  .hidden { display: none; }
+  kbd { background: #eef; border-radius: 4px; padding: 1px 5px; font-size: .8rem; border: 1px solid #ccd; }
+  @media (max-width: 520px) { .card { padding: 22px; } h1 { font-size: 1.5rem; } }
+</style>
+</head>
+<body>
+<div class="card" id="app"></div>
+
+<script>
+const QUESTIONS = [
+  // ---------- 4.1 Plate Tectonics ----------
+  { topic: "Plate Tectonics", q: "Which type of plate boundary is associated with seafloor spreading and mid-ocean ridges?",
+    choices: ["Convergent", "Divergent", "Transform", "Subduction"], answer: 1,
+    exp: "At divergent boundaries plates move apart; magma rises to form new crust, creating mid-ocean ridges (e.g., Mid-Atlantic Ridge) and rift valleys." },
+  { topic: "Plate Tectonics", q: "The Himalaya Mountains formed primarily as a result of:",
+    choices: ["An oceanic plate subducting beneath a continental plate", "Two continental plates colliding at a convergent boundary", "A hot spot beneath the Indian plate", "Two plates sliding past each other at a transform boundary"], answer: 1,
+    exp: "The Indian and Eurasian continental plates collided. Neither is dense enough to subduct easily, so the crust crumpled upward into mountains." },
+  { topic: "Plate Tectonics", q: "The San Andreas Fault in California is an example of which kind of boundary, and what hazard is most associated with it?",
+    choices: ["Divergent; volcanic eruptions", "Convergent; tsunamis", "Transform; earthquakes", "Convergent; island arcs"], answer: 2,
+    exp: "At transform boundaries plates slide past each other horizontally. Stress builds and releases suddenly as earthquakes." },
+  { topic: "Plate Tectonics", q: "When an oceanic plate converges with a continental plate, the oceanic plate subducts because it is:",
+    choices: ["Thicker and less dense", "Thinner and denser", "Older and less dense", "Hotter and more buoyant"], answer: 1,
+    exp: "Oceanic crust (basalt) is denser than continental crust (granite), so it sinks beneath it, forming a trench and a volcanic mountain chain (e.g., the Andes)." },
+  { topic: "Plate Tectonics", q: "The Hawaiian Islands formed as the Pacific Plate moved over a:",
+    choices: ["Subduction zone", "Transform fault", "Mantle hot spot", "Mid-ocean ridge"], answer: 2,
+    exp: "Hot spots are stationary plumes of magma in the mantle. As the plate moves over them, a chain of volcanic islands forms, oldest to youngest." },
+  { topic: "Plate Tectonics", q: "The 'Ring of Fire' surrounding the Pacific Ocean has many volcanoes and earthquakes mainly because it is lined with:",
+    choices: ["Hot spots", "Divergent boundaries", "Subduction zones at convergent boundaries", "Ocean gyres"], answer: 2,
+    exp: "Most of the Pacific rim consists of convergent boundaries where oceanic plates subduct, generating magma (volcanoes) and stress (earthquakes)." },
+  { topic: "Plate Tectonics", q: "What drives the movement of tectonic plates?",
+    choices: ["Convection currents in the mantle", "Ocean tides", "Earth's magnetic field", "Global wind patterns"], answer: 0,
+    exp: "Heat from Earth's core creates convection currents in the mantle; hot material rises, cools, and sinks, dragging the lithospheric plates along." },
+
+  // ---------- 4.2 Soil Formation & Erosion ----------
+  { topic: "Soil Formation & Erosion", q: "Which soil horizon is commonly called 'topsoil' and contains a mix of humus and minerals?",
+    choices: ["O horizon", "A horizon", "B horizon", "C horizon"], answer: 1,
+    exp: "The A horizon (topsoil) contains humus mixed with minerals and is where most biological activity and root growth occur. The O horizon above it is mostly organic litter." },
+  { topic: "Soil Formation & Erosion", q: "The C horizon of a soil profile consists mostly of:",
+    choices: ["Decomposing leaves and organic litter", "Leached minerals that accumulated from above", "Partially weathered parent material", "Humus-rich topsoil"], answer: 2,
+    exp: "The C horizon is made of weathered parent material, sitting just above the unweathered bedrock (R horizon)." },
+  { topic: "Soil Formation & Erosion", q: "Which horizon is the zone of accumulation (illuviation), where minerals leached from upper layers collect?",
+    choices: ["A horizon", "E horizon", "B horizon", "R horizon"], answer: 2,
+    exp: "The B horizon (subsoil) accumulates iron, aluminum, clay, and other minerals leached down from the A and E horizons." },
+  { topic: "Soil Formation & Erosion", q: "Lichens secreting acids that break down rock is an example of:",
+    choices: ["Physical weathering", "Chemical/biological weathering", "Deposition", "Leaching"], answer: 1,
+    exp: "Organisms such as lichens and moss produce acids that chemically break down rock — biological activity causing chemical weathering." },
+  { topic: "Soil Formation & Erosion", q: "Which practice would be MOST effective at reducing soil erosion on a sloped farm field?",
+    choices: ["Conventional tilling", "Contour plowing", "Removing windbreaks", "Leaving fields bare after harvest"], answer: 1,
+    exp: "Contour plowing follows the land's elevation lines, so furrows slow runoff instead of channeling water downhill. Terracing, no-till, cover crops, and windbreaks also reduce erosion." },
+  { topic: "Soil Formation & Erosion", q: "Which of the following is NOT a factor in soil formation?",
+    choices: ["Parent material", "Climate", "Topography", "Atmospheric ozone concentration"], answer: 3,
+    exp: "Soil formation factors include parent material, climate, topography, organisms, and time. Ozone concentration is not a factor." },
+  { topic: "Soil Formation & Erosion", q: "Soils formed from material transported by rivers and deposited in floodplains are typically:",
+    choices: ["Very nutrient-poor", "Fertile, because deposition brings in new sediment and nutrients", "Composed almost entirely of bedrock", "Highly acidic due to leaching"], answer: 1,
+    exp: "Deposition of sediment by water, wind, or glaciers adds minerals and nutrients, making floodplain (alluvial) soils some of the most fertile." },
+
+  // ---------- 4.3 Soil Composition & Properties ----------
+  { topic: "Soil Composition & Properties", q: "Which soil particle has the largest size?",
+    choices: ["Clay", "Silt", "Sand", "Humus"], answer: 2,
+    exp: "Particle sizes: sand (0.05–2 mm) > silt (0.002–0.05 mm) > clay (< 0.002 mm)." },
+  { topic: "Soil Composition & Properties", q: "A soil with a high percentage of clay would MOST likely have:",
+    choices: ["High permeability and low water-holding capacity", "Low permeability and high water-holding capacity", "High permeability and high porosity between particles", "Low nutrient-holding capacity"], answer: 1,
+    exp: "Tiny, tightly packed clay particles slow water infiltration (low permeability) but hold lots of water and nutrients (high water-holding and cation exchange capacity)." },
+  { topic: "Soil Composition & Properties", q: "Loam is generally considered ideal for agriculture because it:",
+    choices: ["Is almost entirely sand, so it drains rapidly", "Is almost entirely clay, so it holds water", "Has a balanced mix of sand, silt, and clay", "Contains no organic matter"], answer: 2,
+    exp: "Loam (roughly 40% sand, 40% silt, 20% clay) balances drainage, aeration, and water/nutrient retention." },
+  { topic: "Soil Composition & Properties", q: "A soil sample is 60% sand, 30% silt, and 10% clay. Which tool would a scientist use to classify its texture?",
+    choices: ["Climatograph", "Soil texture triangle", "Age-structure diagram", "Survivorship curve"], answer: 1,
+    exp: "The soil texture triangle uses percentages of sand, silt, and clay to determine soil type (this sample is a sandy loam)." },
+  { topic: "Soil Composition & Properties", q: "Which of the following would INCREASE soil fertility?",
+    choices: ["Leaching of nutrients by heavy rainfall", "Adding organic matter such as compost", "Erosion of topsoil", "Very low (acidic) pH"], answer: 1,
+    exp: "Organic matter adds nutrients, improves water retention, and increases cation exchange capacity. Leaching, erosion, and extreme pH reduce fertility." },
+  { topic: "Soil Composition & Properties", q: "The ability of soil to allow water to flow through it is called:",
+    choices: ["Porosity", "Permeability", "Water-holding capacity", "Salinity"], answer: 1,
+    exp: "Permeability is how easily water passes through soil. Sandy soils are highly permeable; clay soils are not." },
+  { topic: "Soil Composition & Properties", q: "Soil that holds water very poorly and has low nutrient retention most likely has a high proportion of:",
+    choices: ["Clay", "Humus", "Sand", "Silt"], answer: 2,
+    exp: "Large sand particles leave big pore spaces, so water and dissolved nutrients drain through quickly." },
+
+  // ---------- 4.4 Earth's Atmosphere ----------
+  { topic: "Earth's Atmosphere", q: "Which gas makes up the largest percentage of Earth's atmosphere?",
+    choices: ["Oxygen", "Carbon dioxide", "Nitrogen", "Argon"], answer: 2,
+    exp: "The atmosphere is about 78% N₂, 21% O₂, ~0.93% Ar, and ~0.04% CO₂." },
+  { topic: "Earth's Atmosphere", q: "In which layer of the atmosphere does nearly all weather occur?",
+    choices: ["Troposphere", "Stratosphere", "Mesosphere", "Thermosphere"], answer: 0,
+    exp: "The troposphere is the lowest layer, containing ~75–80% of the atmosphere's mass and nearly all water vapor and weather." },
+  { topic: "Earth's Atmosphere", q: "The ozone layer, which absorbs most incoming UV-B and UV-C radiation, is located in the:",
+    choices: ["Troposphere", "Stratosphere", "Mesosphere", "Exosphere"], answer: 1,
+    exp: "Stratospheric ozone absorbs UV radiation, which is why temperature INCREASES with altitude in the stratosphere." },
+  { topic: "Earth's Atmosphere", q: "Which layer of the atmosphere is the coldest?",
+    choices: ["Troposphere", "Stratosphere", "Mesosphere", "Thermosphere"], answer: 2,
+    exp: "Temperatures at the top of the mesosphere can fall below −90 °C. Meteors burn up in this layer." },
+  { topic: "Earth's Atmosphere", q: "In the troposphere, temperature generally ______ as altitude increases.",
+    choices: ["Increases", "Decreases", "Stays constant", "Increases then sharply drops"], answer: 1,
+    exp: "The troposphere is heated from below by Earth's surface, so air gets colder with height (except during temperature inversions)." },
+  { topic: "Earth's Atmosphere", q: "The aurora borealis occurs in which layer, where X-rays and high-energy UV are absorbed?",
+    choices: ["Stratosphere", "Mesosphere", "Thermosphere", "Troposphere"], answer: 2,
+    exp: "The thermosphere absorbs short-wave X-ray and UV radiation and is where charged solar particles create the auroras." },
+
+  // ---------- 4.5 Global Wind Patterns ----------
+  { topic: "Global Wind Patterns", q: "The deflection of winds to the right in the Northern Hemisphere and to the left in the Southern Hemisphere is caused by:",
+    choices: ["The greenhouse effect", "The Coriolis effect", "The albedo effect", "The rain shadow effect"], answer: 1,
+    exp: "Earth's rotation makes moving air (and water) appear to curve — the Coriolis effect." },
+  { topic: "Global Wind Patterns", q: "Why are many of the world's major deserts located near 30° N and 30° S latitude?",
+    choices: ["Warm, moist air rises there, causing heavy rain", "Cool, dry air descends there in Hadley cells, inhibiting precipitation", "They receive the most direct sunlight on Earth", "Ocean currents bring cold water that increases humidity"], answer: 1,
+    exp: "Air rises at the equator, cools, and drops its moisture as rain. It then flows poleward and sinks around 30°, warming and staying dry — creating deserts." },
+  { topic: "Global Wind Patterns", q: "The prevailing winds that blow from east to west between the equator and 30° latitude are the:",
+    choices: ["Westerlies", "Polar easterlies", "Trade winds", "Jet streams"], answer: 2,
+    exp: "Trade winds (northeast and southeast trades) blow toward the equator and are deflected westward by the Coriolis effect." },
+  { topic: "Global Wind Patterns", q: "Warm air rising at the equator causes which of the following?",
+    choices: ["Low pressure and abundant rainfall", "High pressure and dry conditions", "Polar easterlies", "Formation of temperate deserts"], answer: 0,
+    exp: "Intense solar heating makes air rise at the equator, creating low pressure. Rising air cools and condenses, producing heavy rainfall (tropical rainforests)." },
+  { topic: "Global Wind Patterns", q: "Most of the continental United States lies in which global wind belt?",
+    choices: ["Trade winds", "Westerlies", "Polar easterlies", "Doldrums"], answer: 1,
+    exp: "The westerlies (30°–60° latitude) move weather systems generally from west to east across the U.S." },
+
+  // ---------- 4.6 Watersheds ----------
+  { topic: "Watersheds", q: "A watershed is best defined as:",
+    choices: ["The total volume of water in an aquifer", "An area of land that drains into a particular body of water", "A wetland that filters pollutants", "The boundary between saltwater and freshwater"], answer: 1,
+    exp: "A watershed (drainage basin) is all the land where precipitation drains into the same river, lake, or ocean." },
+  { topic: "Watersheds", q: "Which change would MOST increase runoff and erosion in a watershed?",
+    choices: ["Planting riparian buffers", "Restoring wetlands", "Clear-cutting forests on steep slopes", "Building rain gardens"], answer: 2,
+    exp: "Removing vegetation on steep slopes reduces infiltration and root anchoring, increasing runoff velocity, erosion, and sedimentation downstream." },
+  { topic: "Watersheds", q: "Which is NOT typically used to characterize a watershed?",
+    choices: ["Area and length", "Slope", "Soil and vegetation types", "Atmospheric ozone thickness"], answer: 3,
+    exp: "Watersheds are characterized by area, length, slope, soil, and vegetation types — all of which affect how water moves through them." },
+  { topic: "Watersheds", q: "Fertilizer runoff from farms throughout the Mississippi River watershed contributes to which problem in the Gulf of Mexico?",
+    choices: ["Thermal pollution", "A hypoxic 'dead zone' caused by eutrophication", "Increased ocean salinity", "Coral bleaching from acid rain"], answer: 1,
+    exp: "Excess nitrogen and phosphorus cause algal blooms; when algae die, decomposers consume dissolved oxygen, creating a hypoxic dead zone." },
+
+  // ---------- 4.7 Solar Radiation & Seasons ----------
+  { topic: "Solar Radiation & Seasons", q: "Earth has seasons primarily because:",
+    choices: ["Earth's distance from the sun changes greatly during the year", "Earth's axis is tilted about 23.5°", "The sun's energy output varies by season", "Ocean currents reverse every six months"], answer: 1,
+    exp: "Axial tilt changes the angle and duration of sunlight each hemisphere receives as Earth orbits the sun. (Earth is actually closest to the sun in January!)" },
+  { topic: "Solar Radiation & Seasons", q: "Why does the equator receive more insolation per unit area than the poles?",
+    choices: ["The equator is closer to the sun", "Sunlight strikes the equator at a more direct (near 90°) angle", "The equator has a higher albedo", "There is more ozone at the equator"], answer: 1,
+    exp: "Direct rays concentrate energy over a small area. At the poles, sunlight arrives at a low angle, spreading the same energy over a larger area and through more atmosphere." },
+  { topic: "Solar Radiation & Seasons", q: "Which surface has the HIGHEST albedo?",
+    choices: ["Dark ocean water", "Asphalt", "Fresh snow", "Tropical forest"], answer: 2,
+    exp: "Albedo is the proportion of light reflected. Fresh snow reflects ~80–90% of sunlight, while oceans and asphalt reflect very little." },
+  { topic: "Solar Radiation & Seasons", q: "On the June (summer) solstice, the sun's direct rays strike the:",
+    choices: ["Equator", "Tropic of Cancer (23.5° N)", "Tropic of Capricorn (23.5° S)", "Arctic Circle"], answer: 1,
+    exp: "In June the Northern Hemisphere tilts toward the sun, so direct rays hit the Tropic of Cancer. In December they hit the Tropic of Capricorn." },
+
+  // ---------- 4.8 Earth's Geography & Climate ----------
+  { topic: "Geography & Climate", q: "In a rain shadow, the leeward side of a mountain range is dry because:",
+    choices: ["Air rises and cools, releasing precipitation", "Air descending the mountain has already lost its moisture and warms as it sinks", "Ocean currents bring cold water", "The windward side receives less sunlight"], answer: 1,
+    exp: "Moist air rises up the windward side, cools, and drops precipitation. Dry air then descends the leeward side, warms, and absorbs moisture — producing arid conditions." },
+  { topic: "Geography & Climate", q: "Coastal cities tend to have milder climates than inland cities at the same latitude because:",
+    choices: ["Water has a high specific heat and moderates temperature changes", "Coastal areas receive less solar radiation", "Land absorbs heat more slowly than water", "Ocean air has a higher albedo"], answer: 0,
+    exp: "Water heats and cools more slowly than land, so nearby oceans keep coastal summers cooler and winters warmer." },
+  { topic: "Geography & Climate", q: "The global 'conveyor belt' (thermohaline circulation) is driven primarily by differences in:",
+    choices: ["Wind speed and direction", "Water temperature and salinity (density)", "Tidal forces from the moon", "Plate tectonic movement"], answer: 1,
+    exp: "Cold, salty water near the poles is dense and sinks, driving deep-ocean currents that redistribute heat around the globe." },
+  { topic: "Geography & Climate", q: "Western Europe is warmer than other regions at similar latitudes mainly because of:",
+    choices: ["The Gulf Stream / North Atlantic Drift carrying warm water", "Its high elevation", "A rain shadow from the Alps", "Strong polar easterlies"], answer: 0,
+    exp: "The Gulf Stream transports warm tropical water northeastward, releasing heat that warms Western Europe's climate." },
+  { topic: "Geography & Climate", q: "Large circular ocean currents in each ocean basin, driven by wind and the Coriolis effect, are called:",
+    choices: ["Upwellings", "Gyres", "Hadley cells", "Thermoclines"], answer: 1,
+    exp: "Gyres rotate clockwise in the Northern Hemisphere and counterclockwise in the Southern Hemisphere." },
+
+  // ---------- 4.9 El Niño & La Niña ----------
+  { topic: "El Niño & La Niña", q: "During an El Niño event, which change occurs in the equatorial Pacific?",
+    choices: ["Trade winds strengthen and upwelling off Peru increases", "Trade winds weaken and warm water moves east toward South America", "Sea surface temperatures off Peru drop sharply", "The Gulf Stream reverses direction"], answer: 1,
+    exp: "Weakened (or reversed) trade winds allow warm surface water to slosh eastward, suppressing the upwelling of cold, nutrient-rich water off South America." },
+  { topic: "El Niño & La Niña", q: "Why do fisheries off the coast of Peru typically decline during El Niño?",
+    choices: ["Increased upwelling brings too many nutrients", "Upwelling of cold, nutrient-rich water is suppressed, reducing productivity", "Water becomes too cold for fish", "Hurricanes destroy fishing fleets"], answer: 1,
+    exp: "Without upwelling, phytoplankton lack nutrients, so the food web — including anchovy populations — collapses." },
+  { topic: "El Niño & La Niña", q: "La Niña conditions are characterized by:",
+    choices: ["Weaker trade winds and warmer eastern Pacific water", "Stronger trade winds and cooler-than-normal eastern Pacific water", "No change in trade winds", "Reversal of the thermohaline circulation"], answer: 1,
+    exp: "La Niña is an intensification of normal conditions: stronger trade winds push warm water west, increasing upwelling and cooling the eastern Pacific." },
+  { topic: "El Niño & La Niña", q: "During El Niño, which region typically experiences DRIER-than-normal conditions?",
+    choices: ["Coastal Peru and Ecuador", "The southern United States", "Indonesia and Australia", "The central equatorial Pacific"], answer: 2,
+    exp: "With warm water and rising air shifted east, Indonesia and Australia often see drought and wildfires, while Peru and the southern U.S. get more rain." },
+  { topic: "El Niño & La Niña", q: "El Niño and La Niña are two phases of a cycle known as:",
+    choices: ["ENSO (El Niño–Southern Oscillation)", "The Milankovitch cycle", "The Hadley circulation", "The North Atlantic Oscillation"], answer: 0,
+    exp: "ENSO describes the irregular periodic variation in Pacific winds and sea surface temperatures, occurring every ~2–7 years." }
+];
+
+const LETTERS = "ABCD";
+const app = document.getElementById("app");
+let state = {};
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+const TOPICS = [...new Set(QUESTIONS.map(q => q.topic))];
+
+function renderStart() {
+  app.innerHTML = `
+    <h1>🌍 APES Unit 4 Quiz</h1>
+    <p class="subtitle">Earth Systems & Resources — ${QUESTIONS.length} multiple-choice questions</p>
+    <div class="topics">${TOPICS.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>
+    <label class="opt-row">Number of questions:
+      <select id="count">
+        <option value="10">10</option><option value="20">20</option>
+        <option value="${QUESTIONS.length}" selected>All (${QUESTIONS.length})</option>
+      </select>
+    </label>
+    <label class="opt-row">Topic:
+      <select id="topic">
+        <option value="all">All topics</option>
+        ${TOPICS.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join("")}
+      </select>
+    </label>
+    <label class="opt-row"><input type="checkbox" id="shuffleQ" checked> Shuffle questions</label>
+    <label class="opt-row"><input type="checkbox" id="shuffleA" checked> Shuffle answer choices</label>
+    <p class="subtitle" style="font-size:.88rem;margin-top:18px">Tip: use <kbd>1</kbd>–<kbd>4</kbd> or <kbd>A</kbd>–<kbd>D</kbd> to answer and <kbd>Enter</kbd> to continue.</p>
+    <div class="actions"><button id="startBtn">Start Quiz →</button></div>`;
+  document.getElementById("startBtn").onclick = () => {
+    const topic = document.getElementById("topic").value;
+    let pool = topic === "all" ? QUESTIONS : QUESTIONS.filter(q => q.topic === topic);
+    if (document.getElementById("shuffleQ").checked) pool = shuffle(pool);
+    pool = pool.slice(0, +document.getElementById("count").value);
+    const shuffleA = document.getElementById("shuffleA").checked;
+    startQuiz(pool, shuffleA);
+  };
+}
+
+function startQuiz(pool, shuffleA) {
+  const questions = pool.map(q => {
+    const order = shuffleA ? shuffle([0, 1, 2, 3]) : [0, 1, 2, 3];
+    return { ...q, choices: order.map(i => q.choices[i]), answer: order.indexOf(q.answer) };
+  });
+  state = { questions, idx: 0, answers: [], pool, shuffleA };
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const { questions, idx } = state;
+  const q = questions[idx];
+  const score = state.answers.filter((a, i) => a === questions[i].answer).length;
+  app.innerHTML = `
+    <div class="top-bar"><span>Question ${idx + 1} of ${questions.length}</span><span>Score: ${score}</span></div>
+    <div class="progress"><div style="width:${(idx / questions.length) * 100}%"></div></div>
+    <span class="topic-tag">${esc(q.topic)}</span>
+    <h2>${esc(q.q)}</h2>
+    <div class="choices">
+      ${q.choices.map((c, i) => `<button class="choice" data-i="${i}"><span class="letter">${LETTERS[i]}</span><span>${esc(c)}</span></button>`).join("")}
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="actions">
+      <button class="secondary" id="quitBtn">Quit</button>
+      <button id="nextBtn" disabled>${idx === questions.length - 1 ? "See Results" : "Next →"}</button>
+    </div>`;
+  app.querySelectorAll(".choice").forEach(b => b.onclick = () => choose(+b.dataset.i));
+  document.getElementById("nextBtn").onclick = next;
+  document.getElementById("quitBtn").onclick = () => { if (confirm("Quit and see results so far?")) renderResults(); };
+}
+
+function choose(i) {
+  if (state.answers[state.idx] !== undefined) return;
+  const q = state.questions[state.idx];
+  state.answers[state.idx] = i;
+  const btns = app.querySelectorAll(".choice");
+  btns.forEach(b => b.disabled = true);
+  btns[q.answer].classList.add("correct");
+  const correct = i === q.answer;
+  if (!correct) btns[i].classList.add("wrong");
+  const fb = document.getElementById("fb");
+  fb.className = "feedback show " + (correct ? "good" : "bad");
+  fb.innerHTML = `<strong>${correct ? "✅ Correct!" : `❌ Incorrect — the answer is ${LETTERS[q.answer]}.`}</strong><br>${esc(q.exp)}`;
+  const nb = document.getElementById("nextBtn");
+  nb.disabled = false; nb.focus();
+  const score = state.answers.filter((a, k) => a === state.questions[k].answer).length;
+  app.querySelector(".top-bar span:last-child").textContent = "Score: " + score;
+}
+
+function next() {
+  if (state.answers[state.idx] === undefined) return;
+  if (state.idx < state.questions.length - 1) { state.idx++; renderQuestion(); }
+  else renderResults();
+}
+
+function renderResults() {
+  const { questions, answers } = state;
+  const answered = answers.filter(a => a !== undefined).length;
+  const correct = questions.filter((q, i) => answers[i] === q.answer).length;
+  const pct = answered ? Math.round((correct / answered) * 100) : 0;
+  const msg = pct >= 90 ? "🏆 Outstanding — you're ready for the AP exam!"
+    : pct >= 75 ? "🌱 Great work! Review the few you missed."
+    : pct >= 60 ? "📚 Solid start — focus on your weaker topics below."
+    : "🔁 Keep studying! Review the explanations and try again.";
+
+  const byTopic = {};
+  questions.forEach((q, i) => {
+    if (answers[i] === undefined) return;
+    byTopic[q.topic] ??= { c: 0, t: 0 };
+    byTopic[q.topic].t++;
+    if (answers[i] === q.answer) byTopic[q.topic].c++;
+  });
+
+  const missed = questions.map((q, i) => ({ q, a: answers[i] })).filter(x => x.a !== undefined && x.a !== x.q.answer);
+
+  app.innerHTML = `
+    <h1>Results</h1>
+    <div class="score-big">${correct} / ${answered}</div>
+    <div class="grade">${pct}% &nbsp;·&nbsp; ${msg}</div>
+    <h2>Breakdown by topic</h2>
+    <table>
+      ${Object.entries(byTopic).map(([t, v]) => {
+        const p = Math.round(v.c / v.t * 100);
+        const color = p >= 75 ? "var(--correct)" : p >= 50 ? "#e0a020" : "var(--wrong)";
+        return `<tr><td>${esc(t)}<div class="bar"><div style="width:${p}%;background:${color}"></div></div></td><td class="num">${v.c}/${v.t} (${p}%)</td></tr>`;
+      }).join("")}
+    </table>
+    <div class="actions" style="justify-content:flex-start;flex-wrap:wrap">
+      ${missed.length ? `<button id="retryMissed">Retry missed (${missed.length})</button>` : ""}
+      <button id="retryAll">Retake quiz</button>
+      <button class="secondary" id="home">Home</button>
+    </div>
+    ${missed.length ? `<h2 style="margin-top:28px">Review missed questions</h2>
+      ${missed.map(({ q, a }) => `
+        <div class="review-item">
+          <span class="topic-tag">${esc(q.topic)}</span>
+          <p><strong>${esc(q.q)}</strong></p>
+          <p class="yours">Your answer: ${esc(q.choices[a])}</p>
+          <p class="right">Correct: ${esc(q.choices[q.answer])}</p>
+          <p class="exp">${esc(q.exp)}</p>
+        </div>`).join("")}` : `<p style="margin-top:24px">🎉 No missed questions — perfect score!</p>`}`;
+
+  if (missed.length) document.getElementById("retryMissed").onclick = () => {
+    const originals = missed.map(m => QUESTIONS.find(o => o.q === m.q.q));
+    startQuiz(shuffle(originals), state.shuffleA);
+  };
+  document.getElementById("retryAll").onclick = () => startQuiz(shuffle(state.pool), state.shuffleA);
+  document.getElementById("home").onclick = renderStart;
+}
+
+document.addEventListener("keydown", e => {
+  if (!state.questions || !document.querySelector(".choice")) return;
+  const k = e.key.toUpperCase();
+  const map = { "1": 0, "2": 1, "3": 2, "4": 3, A: 0, B: 1, C: 2, D: 3 };
+  if (k in map) choose(map[k]);
+  else if (e.key === "Enter" && state.answers[state.idx] !== undefined) { e.preventDefault(); next(); }
+});
+
+renderStart();
+</script>
+</body>
+</html>
